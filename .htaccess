@@ -1,0 +1,63 @@
+# activa página de error 404
+
+ErrorDocument 404 /pages-404.html
+
+# redireccionar todos los url's, www, y http apunten hacia: https:
+
+# RewriteEngine On 
+# RewriteCond %{HTTPS} off 
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# remove .html extension
+
+RewriteEngine On
+RewriteCond %{THE_REQUEST} /([^.]+)\.html [NC]
+RewriteRule ^ /%1 [NC,L,R]
+
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^ %{REQUEST_URI}.html [NC,L]
+
+# Activar la compresion de gzip en el hosting
+
+<ifModule mod_gzip.c>
+mod_gzip_on Yes
+mod_gzip_dechunk Yes
+mod_gzip_item_include file .(html?|txt|css|js|php|pl)$
+mod_gzip_item_include handler ^cgi-script$
+mod_gzip_item_include mime ^text/.*
+mod_gzip_item_include mime ^application/x-javascript.*
+mod_gzip_item_exclude mime ^image/.*
+mod_gzip_item_exclude rspheader ^Content-Encoding:.*gzip.*
+</ifModule>
+
+# cache images and flash content for 7 days
+
+<FilesMatch ".(flv|gif|jpg|jpeg|png|ico|swf)$">
+Header set Cache-Control "max-age=648000"
+</FilesMatch>
+
+# cache text, css, and javascript files for 7 days
+
+<FilesMatch ".(js|css|pdf|txt)$">
+Header set Cache-Control "max-age=648000"
+</FilesMatch>
+
+# cache html and htm files for 7 days
+
+<FilesMatch ".(html|htm)$">
+Header set Cache-Control "max-age=648000"
+</FilesMatch>
+
+# serve all files with the extension .html as UTF-8
+
+AddCharset UTF-8 .html
+
+# Enable Keep Alive, envía todos las archivos al mismo tiempo del servidor al nevagador 
+
+<ifModule mod_headers.c>
+Header set Connection keep-alive
+</ifModule>
+
+
+
+
